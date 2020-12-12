@@ -6,21 +6,48 @@
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.2",
     "@testing-library/user-event": "^12.5.0",
-    "@types/jest": "^26.0.19",
-    "@types/node": "^12.19.8",
-    "@types/react": "^16.14.2",
-    "@types/react-dom": "^16.9.10",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
     "typescript": "^4.1.3",
-    "web-vitals": "^0.2.4"
+    "web-vitals": "^0.2.4",
+    "react-globe": "^5.0.2",
+    "react-use": "^15.3.4",
+    "three": "^0.123.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.19",
+    "@types/node": "^12.19.8",
+    "@types/react": "^16.14.2",
+    "@types/react-dom": "^16.9.10",
+    "@types/three": "^0.103.2",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.3.0",
+    "prettier": "^2.1.2",
+    "pretty-quick": "^3.1.0",
+    "typescript": "4.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged",
+      "pre-push": "npm run check"
+    }
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint \"**/*.ts*\" --ignore-pattern node_modules/",
+    "lint-fix": "eslint \"**/*.ts*\" --fix --ignore-pattern node_modules/",
+    "style": "prettier --check \"src/**/*.ts*\"",
+    "style-fix": "prettier --write \"src/**/*.ts*\" --ignore-unknown",
+    "check": "npm run lint && npm run style",
+    "fix": "npm run lint-fix && npm run style-fix"
   },
   "eslintConfig": {
     "extends": [
