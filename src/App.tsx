@@ -4,7 +4,7 @@ import { Globe } from "./globe";
 
 function App() {
   return (
-    <div className="App">
+    <div className="appRoot">
       <header className="App-header">
         <h1>Globe</h1>
       </header>

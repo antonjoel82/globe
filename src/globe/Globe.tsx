@@ -1,46 +1,78 @@
-import React, { FC, useState } from "react";
-import ReactGlobe, { Marker, MarkerCallback } from "react-globe";
+import noop from "lodash/noop";
+import React, { FC, useEffect, useState } from "react";
+import ReactGlobe, { Marker, MarkerCallback, Options } from "react-globe";
+import { useMount } from "react-use";
 import { GlobeMarker, GlobeEvent, DefocusHandler } from "./GlobeTypes";
-import { defaultMarkers } from "./markers";
+import { getElevationMarkers } from "./markers";
 
 function markerTooltipRenderer(marker: Marker) {
   return `CITY: ${marker.city} (Value: ${marker.value})`;
 }
 
-const options = {
-  markerTooltipRenderer,
+const defaultOptions: Partial<Options> = {
+  cameraAutoRotateSpeed: 1.5,
+  // markerTooltipRenderer,
+  markerType: "bar",
+  enableMarkerGlow: true,
+  markerRadiusScaleRange: [0.05, 0.5],
+  // markerOffsetRadiusScale: 0.5,
 };
 
 // interface GlobeProps {}
 export const Globe: FC = () => {
-  const randomMarkers = defaultMarkers.map((marker) => ({
-    ...marker,
-    value: Math.floor(Math.random() * 100),
-  }));
   const [markers, setMarkers] = useState<GlobeMarker[]>([]);
   const [event, setEvent] = useState<GlobeEvent>({ type: "start" });
   const [details, setDetails] = useState("");
+  const [options, setOptions] = useState(defaultOptions);
 
-  const onClickMarker: MarkerCallback = (marker, markerObject, event) => {
-    setEvent({
-      type: "CLICK",
-      marker,
-      markerObjectID: markerObject.uuid,
-      pointerEventPosition: { x: event.clientX, y: event.clientY },
-    });
-    setDetails(markerTooltipRenderer(marker));
-  };
-  const onDefocus: DefocusHandler = (previousFocus) => {
-    setEvent({
-      type: "DEFOCUS",
-      previousFocus,
-    });
-    setDetails("");
-  };
+  useMount(async () => {
+    setMarkers(await getElevationMarkers());
+  });
+
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     console.log("Updating markers!");
+  //     // setMarkers((_markers) =>
+  //     //   _markers.map((marker, ndx) => {
+  //     //     return {
+  //     //       ...marker,
+  //     //       value: 0,
+  //     //     };
+  //     //   })
+  //     // );
+  //     setOptions((opt: Partial<Options>) => {
+  //       return {
+  //         ...opt,
+  //         markerOffsetRadiusScale: opt.markerOffsetRadiusScale === 2 ? 1 : 2,
+  //       };
+  //     });
+  //   }, 3000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // });
+
+  // const onClickMarker: MarkerCallback = (marker, markerObject, event) => {
+  //   setEvent({
+  //     type: "CLICK",
+  //     marker,
+  //     markerObjectID: markerObject.uuid,
+  //     pointerEventPosition: { x: event.clientX, y: event.clientY },
+  //   });
+  //   setDetails(markerTooltipRenderer(marker));
+  // };
+  // const onDefocus: DefocusHandler = (previousFocus) => {
+  //   setEvent({
+  //     type: "DEFOCUS",
+  //     previousFocus,
+  //   });
+  //   setDetails("");
+  // };
 
   return (
     <div>
-      {details && (
+      {/* {details && (
         <div
           style={{
             background: "white",
@@ -57,8 +89,8 @@ export const Globe: FC = () => {
             {JSON.stringify(event.pointerEventPosition)}
           </p>
         </div>
-      )}
-      <div style={{ padding: 32 }}>
+      )} */}
+      {/* <div style={{ padding: 32 }}>
         <button onClick={() => setMarkers(randomMarkers)}>
           Randomize markers
         </button>
@@ -79,14 +111,15 @@ export const Globe: FC = () => {
         >
           Remove marker
         </button>
-      </div>
+      </div> */}
       <ReactGlobe
-        height="100vh"
+        height="80vh"
         markers={markers as Marker[]}
         options={options}
-        width="100vw"
-        onClickMarker={onClickMarker}
-        onDefocus={onDefocus}
+        width="100vh"
+        onClickMarker={noop}
+        onMouseOverMarker={noop}
+        onDefocus={noop}
       />
     </div>
   );
